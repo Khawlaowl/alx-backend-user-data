@@ -51,30 +51,34 @@ def login():
             abort(401)
     except NoResultFound:
         abort(401)
-
-
 @app.route('/sessions', methods=['DELETE'])
-def log_out() -> str:
-    """Find the user with the requested session ID.
-    If the user exists destroy the session and redirect the user to GET /.
-    If the user does not exist, respond with a 403 HTTP status.
+def log_out() -> Response:
     """
-    session_id = request.cookies.get("session_id", None)
+    Endpoint for user logout.
+    Handles user logout by destroying the session associated with the user's session ID.
+    The user is redirected to the home page ("/") after successful logout.
+    Returns:
+    - Redirect to the home page ("/") after successful logout.
+    - HTTP 403 Forbidden if there's an issue during the logout process.
+    """
+    session_id = request.cookies.get("session_id")
 
-    if session_id is None:
+    if not session_id:
         abort(403)
 
     user = AUTH.get_user_from_session_id(session_id)
-
-    if user is None:
+    
+    if not user:
         abort(403)
 
     AUTH.destroy_session(user.id)
-
     return redirect('/')
 
-
 @app.route('/profile', methods=['GET'])
+
+
+
+
 def profile():
     """ Get user profile
     """
