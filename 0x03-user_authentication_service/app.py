@@ -54,23 +54,29 @@ def login():
 
 
 @app.route('/sessions', methods=['DELETE'], strict_slashes=False)
-def logout():
-    """Logout user
+﻿
+
+def logout() -> Response:
     """
-    session_id = request.cookies.get('session_id', None)
+Endpoint for user logout.
 
-    if session_id is None:
-        abort(403)
-
-    user = AUTH.get_user_from_session_id(session_id)
-
-    if user:
-        AUTH.destroy_session(user.id)
-        return redirect('/')
-    else:
-        abort(403)
-
-
+Handles user logout by destroying the session associated with the user's session ID. 
+The user is redirected to the home page ("/") after successful logout.
+Returns:
+- Redirect to the home page ("/") after successful logout.
+- HTTP 403 Forbidden if there's an issue during the logout process.
+    """
+if request.method="DELETE":
+    session_id = request.cookies.get("session_id", None)  
+        if session_id is None:
+            abort (403)
+try:
+existing_user=AUTH.get_user_from_session_id (session_id)
+if existing_user:
+    AUTH.destroy_session(existing_user.id)
+    return redirect("/")
+except Exception:
+    abort (403)
 @app.route('/profile', strict_slashes=False)
 def profile():
     """ Get user profile
